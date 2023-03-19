@@ -5,12 +5,19 @@ import random
 
 
 app = Flask(__name__)
+LIST_TYPES = ['now_playing', 'popular', 'top_rated', 'upcoming']
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def homepage():
-    selected_list = request.args.get('list_type', 'popular')
-    movies = tmdb_client.get_movies(how_many=8, list_type=selected_list)
-    return render_template("homepage.html", movies=movies, current_list=selected_list)
+    passed_list = request.args.get('list_type', '')
+
+    if passed_list in LIST_TYPES:
+        selected_list = passed_list
+    else:
+        selected_list = 'popular'
+
+    movies = tmdb_client.get_movies_list(selected_list, 12)
+    return render_template('homepage.html', movies=movies, list_types=LIST_TYPES, selected=selected_list)
 
 @app.route("/movie/<movie_id>")
 def movie_details(movie_id):

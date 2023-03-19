@@ -1,4 +1,4 @@
-import requests
+import requests, random
 
 API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ZTU4MmNjYzQ0MmI5YzIwYzg0YjIyY2E2MTM5YTM1NSIsInN1YiI6IjY0MTE3OWNkYTZjMTA0MDBjMGM2MDEwYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9-luKdddIfnw834po92m0pK8rL4VhCrJ0voqFMjy4v0"
 
@@ -20,14 +20,20 @@ def get_movies(list_type, how_many):
     data = get_popular_movies(list_type)
     return data["results"][:how_many]
 
-def get_movies_list(list_type):
-    endpoint = f"https://api.themoviedb.org/3/movie/{list_type}"
-    headers = {
-        "Authorization": f"Bearer {API_TOKEN}"
-    }
-    response = requests.get(endpoint, headers=headers)
+def get_tmdb_response(url: str) -> dict:
+    headers = {'Authorization': f"Bearer {API_TOKEN}"}
+    response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
+
+def get_movies_list(list_name: str = 'popular', list_len: int = 12) -> list:
+    url = f"https://api.themoviedb.org/3/movie/{list_name}"
+    result = get_tmdb_response(url)
+    try:
+        rand_movie_list = random.sample(result.get('results'), k=list_len)
+        return rand_movie_list
+    except ValueError:
+        return result.get('results')[:list_len]
 
 def get_single_movie(movie_id):
     endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}"
