@@ -35,21 +35,15 @@ def get_movies_list(list_name: str = 'popular', list_len: int = 12) -> list:
     except ValueError:
         return result.get('results')[:list_len]
 
-def get_single_movie(movie_id):
-    endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}"
-    headers = {
-        "Authorization": f"Bearer {API_TOKEN}"
-    }
-    response = requests.get(endpoint, headers=headers)
-    return response.json()
+def get_single_movie(movie_id: int) -> dict:
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}"
+    result = get_tmdb_response(url)
+    return result
 
-def get_single_movie_cast(movie_id):
-    endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}/credits"
-    headers = {
-        "Authorization": f"Bearer {API_TOKEN}"
-    }
-    response = requests.get(endpoint, headers=headers)
-    return response.json()["cast"]
+def get_single_movie_cast(movie_id: int, list_len: int = 4) -> list:
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}/credits"
+    result = get_tmdb_response(url)
+    return result.get('cast', [])[:list_len]
 
 def get_movie_images(movie_id):
     endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}/images"
@@ -58,5 +52,6 @@ def get_movie_images(movie_id):
     }
     response = requests.get(endpoint, headers=headers)
     return response.json()
+    
 
 
