@@ -2,8 +2,6 @@ from flask import Flask, render_template, request
 import tmdb_client
 import random
 
-
-
 app = Flask(__name__)
 LIST_TYPES = ['now_playing', 'popular', 'top_rated', 'upcoming']
 
